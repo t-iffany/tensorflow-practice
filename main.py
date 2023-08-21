@@ -33,3 +33,27 @@ print(image_count)
 roses = list(data_dir.glob('roses/*'))
 img = PIL.Image.open(str(roses[1]))
 img.show('Image')
+
+# create a dataset: define parameters for the loader
+batch_size = 32
+img_height = 180
+img_width = 180
+
+# load data using a Keras utility
+# use validation split when developing your model
+# 80% of the images for trianing and 20% for validation
+train_ds = tf.keras.utils.image_dataset_from_directory(
+  data_dir,
+  validation_split=0.2,
+  subset="training",
+  seed=123,
+  image_size=(img_height, img_width),
+  batch_size=batch_size)
+
+val_ds = tf.keras.utils.image_dataset_from_directory(
+  data_dir,
+  validation_split=0.2,
+  subset="validation",
+  seed=123,
+  image_size=(img_height, img_width),
+  batch_size=batch_size)

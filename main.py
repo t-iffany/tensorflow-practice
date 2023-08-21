@@ -73,3 +73,27 @@ for images, labels in train_ds.take(1):
     plt.title(class_names[labels[i]])
     plt.axis("off")
 plt.show()
+
+# manually iterate over the dataset and retrieve batches of images
+# image_batch is a tensor of the shape (32, 180, 180, 3)
+# this is a batch of 32 images of shape 180x180x3
+# label_batch is a tensor of the shape (32, ), thse are corresponding labels to the 32 images
+# you can call .numpy() on either of these tensors to convert them to a numpy.ndarray
+for image_batch, labels_batch in train_ds:
+  print(image_batch.shape)
+  print(labels_batch.shape)
+  break
+
+# standardize the data
+# for neural network, seek to make RGB channel input values small
+# standardize values to be in the [0, 1] range by using tf.keras.layers.Rescaling
+normalization_layer = tf.keras.layers.Rescaling(1./255)
+
+# There are two ways to use this layer. You can apply it to the dataset by calling Dataset.map:
+normalized_ds = train_ds.map(lambda x, y: (normalization_layer(x), y))
+image_batch, labels_batch = next(iter(normalized_ds))
+first_image = image_batch[0]
+# Notice the pixel values are now in `[0,1]`.
+print(np.min(first_image), np.max(first_image))
+
+# or you can include the layer inside your model definition to simplify deployment
